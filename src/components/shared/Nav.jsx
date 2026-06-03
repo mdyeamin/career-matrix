@@ -75,13 +75,24 @@ export default function Nav() {
           <div className="w-[1px] h-5 bg-stone-700"></div>
 
           <div className="flex items-center gap-5">
-            <Link
-              href="/auth/signin"
-              underline="none"
-              className="no-underline text-violet-400 hover:text-violet-300 text-sm font-medium transition-colors"
-            >
-              Sign In
-            </Link>
+            {session?.user ? (
+              <Button
+                onClick={async () => await authClient.signOut()}
+                variant=""
+                underline="none"
+                className="no-underline text-violet-400 hover:text-violet-300 text-sm font-medium transition-colors"
+              >
+                Sign Out
+              </Button>
+            ) : (
+              <Link
+                href="/auth/signin"
+                underline="none"
+                className="no-underline text-violet-400 hover:text-violet-300 text-sm font-medium transition-colors"
+              >
+                Sign In
+              </Link>
+            )}
             <Button
               className="bg-violet-600 hover:bg-violet-500 text-white font-medium text-[11px] md:text-xs tracking-wide shadow-lg shadow-violet-600/20 px-4 md:px-5 h-9 md:h-10 transition-colors"
               radius="md"
