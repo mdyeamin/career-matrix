@@ -4,8 +4,16 @@ import React, { useState } from "react";
 import { Link, Button } from "@heroui/react";
 import { FiMenu, FiX } from "react-icons/fi";
 import { usePathname } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
 
 export default function Nav() {
+  const {
+    data: session,
+    isPending, //loading state
+    error, //error object
+    refetch, //refetch the session
+  } = authClient.useSession();
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
 
@@ -14,6 +22,7 @@ export default function Nav() {
     { name: "Company", path: "/company" },
     { name: "Pricing", path: "/pricing" },
   ];
+  console.log(session);
 
   return (
     <nav className="fixed top-4 inset-x-0 z-50 px-4 font-sans">
@@ -67,7 +76,7 @@ export default function Nav() {
 
           <div className="flex items-center gap-5">
             <Link
-              href="/signin"
+              href="/auth/signin"
               underline="none"
               className="no-underline text-violet-400 hover:text-violet-300 text-sm font-medium transition-colors"
             >
