@@ -11,6 +11,7 @@ import {
   Description,
   Button,
   Link,
+  Spinner,
 } from "@heroui/react";
 import { FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
 import { FaArrowRight } from "react-icons/fa";
@@ -19,11 +20,12 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
 const SignIn = () => {
-  const router = useRouter()
+  const router = useRouter();
   const [isVisible, setIsVisible] = useState(false);
-
+  const [isLoading, setIsLoading] = useState(false);
   const handleSighIn = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     const fromData = new FormData(e.currentTarget);
     const userData = Object.fromEntries(fromData.entries());
     console.log(userData);
@@ -34,13 +36,17 @@ const SignIn = () => {
       });
       if (error) {
         toast.error(error.message || "Invalid email or password!");
+        setIsLoading(false)
       }
       if (data) {
         toast.success("Welcome back!");
         router.push("/");
       }
-    } catch (error) {}
-    console.log("data", data, "error", error);
+    } catch (error) {
+      toast.error(err.message || "Something went wrong. Please try again.");
+    } finally {
+      // setIsLoading(false);
+    }
   };
 
   return (
@@ -133,10 +139,18 @@ const SignIn = () => {
             {/* বাটন গ্রুপ */}
             <div className="space-y-3 pt-2">
               <Button
+              isDisabled={isLoading}
                 type="submit"
                 className="w-full h-10 bg-violet-600 text-white font-bold text-xs rounded-lg hover:bg-violet-500 transition-all uppercase"
               >
-                <span>Sign In</span>
+                {isLoading ? (
+                  <div className="flex items-center gap-2">
+                    <span>Processing</span>
+                    <Spinner size="sm" color="white" />
+                  </div>
+                ) : (
+                  <span>Sign In</span>
+                )}
               </Button>
 
               <div className="flex items-center gap-2">

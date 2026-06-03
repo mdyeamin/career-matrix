@@ -10,6 +10,7 @@ import {
   FieldError,
   Button,
   Link,
+  Spinner,
 } from "@heroui/react";
 import {
   FiUser,
@@ -27,9 +28,11 @@ const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
 
 const SignUp = () => {
   const [isVisible, setIsVisible] = useState(false);
-const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
   const handleSighUp = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     const fromData = new FormData(e.currentTarget);
     const userData = Object.fromEntries(fromData.entries());
 
@@ -41,14 +44,18 @@ const router = useRouter()
       if (error) {
         console.log("error", error);
         toast.error(error.message || "Registration failed!");
+        setIsLoading(false)
       }
-      if(data){
+      if (data) {
         toast.success("successfully! Redirecting... Please login");
         await authClient.signOut();
-        router.push("/auth/signin")
+        router.push("/auth/signin");
       }
     } catch (err) {
       toast.error(err.message || "Something went wrong. Please try again.");
+      
+    } finally {
+    //   setIsLoading(false);
     }
     // console.log("data",data,"error",error);
   };
@@ -197,9 +204,17 @@ const router = useRouter()
             <div className="space-y-3 pt-2">
               <Button
                 type="submit"
+                isDisabled={isLoading}
                 className="w-full h-10 bg-violet-600 text-white font-bold text-xs rounded-lg hover:bg-violet-500 transition-all uppercase"
               >
-                <span>Register Now</span>
+                {isLoading ? (
+                  <div className="flex items-center gap-2">
+                    <span>Processing</span>
+                    <Spinner size="sm" color="white" />
+                  </div>
+                ) : (
+                  <span>Register Now</span>
+                )}
               </Button>
 
               <div className="flex items-center gap-2">

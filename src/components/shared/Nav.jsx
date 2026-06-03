@@ -76,6 +76,7 @@ export default function Nav() {
 
           <div className="flex items-center gap-5">
             {session?.user ? (
+              <Link href="/auth/signin">
               <Button
                 onClick={async () => await authClient.signOut()}
                 variant=""
@@ -83,7 +84,7 @@ export default function Nav() {
                 className="no-underline text-violet-400 hover:text-violet-300 text-sm font-medium transition-colors"
               >
                 Sign Out
-              </Button>
+              </Button></Link>
             ) : (
               <Link
                 href="/auth/signin"

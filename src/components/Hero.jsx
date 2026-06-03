@@ -16,7 +16,7 @@ const Hero = () => {
             src="/globe.png"
             alt="Globe and Spotlight Background"
             fill
-            className="object-cover object-top"
+            className="object-cover object-top "
             priority
           />
           {/* অতিরিক্ত ডার্ক ওভারলে */}
