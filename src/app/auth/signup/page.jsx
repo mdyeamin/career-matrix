@@ -11,6 +11,9 @@ import {
   Button,
   Link,
   Spinner,
+  RadioGroup,
+  Radio,
+  Description,
 } from "@heroui/react";
 import {
   FiUser,
@@ -29,6 +32,7 @@ const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
 const SignUp = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [role, setRole] = useState("seeker");
   const router = useRouter();
   const handleSighUp = async (e) => {
     e.preventDefault();
@@ -39,12 +43,13 @@ const SignUp = () => {
     try {
       const { data, error } = await authClient.signUp.email({
         ...userData,
+        role,
         // callbackURL: "/",
       });
       if (error) {
         console.log("error", error);
         toast.error(error.message || "Registration failed!");
-        setIsLoading(false)
+        setIsLoading(false);
       }
       if (data) {
         toast.success("successfully! Redirecting... Please login");
@@ -53,9 +58,8 @@ const SignUp = () => {
       }
     } catch (err) {
       toast.error(err.message || "Something went wrong. Please try again.");
-      
     } finally {
-    //   setIsLoading(false);
+      //   setIsLoading(false);
     }
     // console.log("data",data,"error",error);
   };
@@ -198,6 +202,33 @@ const SignUp = () => {
                 </InputGroup>
                 <FieldError className="text-[10px] text-rose-500 mt-0.5" />
               </TextField>
+            </div>
+
+            <div className="flex flex-col gap-4">
+              <Label>Role</Label>
+              <RadioGroup
+                onChange={(value) => setRole(value)}
+                defaultValue="seeker"
+                name="plan-orientation"
+                orientation="horizontal"
+              >
+                <Radio value="seeker">
+                  <Radio.Control>
+                    <Radio.Indicator />
+                  </Radio.Control>
+                  <Radio.Content>
+                    <Label>Seeker</Label>
+                  </Radio.Content>
+                </Radio>
+                <Radio value="recruiter">
+                  <Radio.Control>
+                    <Radio.Indicator />
+                  </Radio.Control>
+                  <Radio.Content>
+                    <Label>Recruiter</Label>
+                  </Radio.Content>
+                </Radio>
+              </RadioGroup>
             </div>
 
             {/* বাটন গ্রুপ */}
