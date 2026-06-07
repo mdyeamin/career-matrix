@@ -33,6 +33,8 @@ const SignUp = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [role, setRole] = useState("seeker");
+
+  
   const router = useRouter();
   const handleSighUp = async (e) => {
     e.preventDefault();

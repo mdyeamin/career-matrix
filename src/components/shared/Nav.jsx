@@ -22,7 +22,7 @@ export default function Nav() {
     { name: "Company", path: "/company" },
     { name: "Pricing", path: "/pricing" },
   ];
-  console.log(session);
+  // console.log(session);
 
   return (
     <nav className="fixed top-4 inset-x-0 z-50 px-4 font-sans">
