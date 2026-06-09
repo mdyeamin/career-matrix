@@ -3,7 +3,7 @@ import React from 'react';
 const Jobs = () => {
     return (
         <div>
-            <h2 className="text-4xl">Jobs Page</h2>
+            <h2 className="text-xl">Show all company jobs</h2>
         </div>
     );
 };

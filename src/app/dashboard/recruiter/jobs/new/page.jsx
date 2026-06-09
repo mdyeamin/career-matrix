@@ -13,19 +13,40 @@ import {
   Switch,
 } from "@heroui/react";
 import { Xmark } from "@gravity-ui/icons";
+import { postJobs } from "@/lib/actions/jobs";
+import toast from "react-hot-toast";
+import { redirect } from "next/navigation";
 
 const PostJobForm = () => {
-  const [isRemote, setIsRemote] = useState(false);
-  console.log(isRemote);
+  const [mockCompany] = useState({
+    name: "Acme Corp (Auto-filled)",
+    id: "company_000",
+    isApproved: true,
+  });
 
-  const onSubmit = (e) => {
+  const [isRemote, setIsRemote] = useState(false);
+
+  const onSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const data = Object.fromEntries(formData.entries());
-    data.isRemote = isRemote;
 
-    
-    console.log("Job Posted:", data);
+    const payload = {
+      ...data,
+      companyId: mockCompany.id,
+      status: "active",
+      isRemote,
+      isPubliclyVisible: true,
+    };
+    const res = await postJobs(payload);
+    if (!res.insertedId) {
+      toast.error("Failed to post job. Please try again.");
+    }
+    if (res.insertedId) {
+      toast.success("Job posted successfully!");
+      e.target.reset();
+      redirect("/dashboard/recruiter/jobs");
+    }
   };
 
   return (
@@ -77,6 +98,15 @@ const PostJobForm = () => {
               <Select.Popover>
                 <ListBox>
                   <ListBox.Item id="eng">Engineering</ListBox.Item>
+                  <ListBox.Item id="design">Design</ListBox.Item>
+                  <ListBox.Item id="marketing">Marketing</ListBox.Item>
+                  <ListBox.Item id="sales">Sales</ListBox.Item>
+                  <ListBox.Item id="product">Product Management</ListBox.Item>
+                  <ListBox.Item id="hr">Human Resources</ListBox.Item>
+                  <ListBox.Item id="finance">Finance</ListBox.Item>
+                  <ListBox.Item id="customer-support">
+                    Customer Support
+                  </ListBox.Item>
                 </ListBox>
               </Select.Popover>
             </Select>
