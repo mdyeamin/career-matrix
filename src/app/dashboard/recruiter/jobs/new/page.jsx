@@ -11,6 +11,7 @@ import {
   TextArea,
   TextField,
   Switch,
+  
 } from "@heroui/react";
 import { Xmark } from "@gravity-ui/icons";
 import { postJobs } from "@/lib/actions/jobs";
@@ -31,7 +32,7 @@ const PostJobForm = () => {
     const formData = new FormData(e.currentTarget);
     const data = Object.fromEntries(formData.entries());
 
-    const payload = {
+    const payload = { 
       ...data,
       companyId: mockCompany.id,
       status: "active",
@@ -39,6 +40,8 @@ const PostJobForm = () => {
       isPubliclyVisible: true,
     };
     const res = await postJobs(payload);
+    
+    console.log("Response from postJobs action:", res);
     if (!res.insertedId) {
       toast.error("Failed to post job. Please try again.");
     }
