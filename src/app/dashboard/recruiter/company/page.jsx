@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Button,
   Chip,
@@ -10,6 +10,8 @@ import {
   TextField,
   TextArea,
 } from "@heroui/react";
+import { createCompany } from "@/lib/actions/companies";
+import toast from "react-hot-toast";
 
 const CompanyProfile = () => {
   // State to toggle between view mode and edit/register mode
@@ -58,7 +60,7 @@ const CompanyProfile = () => {
     }
   };
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const data = Object.fromEntries(formData.entries());
@@ -66,8 +68,21 @@ const CompanyProfile = () => {
     // Attach the uploaded image URL to the company data
     data.logo = logoUrl || company?.logo;
 
-    setCompany({ ...data, status: "Pending" });
+    const newCompanyData = { ...data, status: "Pending" };
+
+    setCompany(newCompanyData); // Update state with new company data
+    const payload = await createCompany(newCompanyData); // Send data to server
+    console.log("send data to the server", payload);
+    if (payload.insertedId) {
+      toast.success(
+        "Company information saved successfully! Awaiting approval.",
+      );
+    }
+    if (!payload.insertedId) {
+      toast.error("Failed to save company information. Please try again.");
+    }
     setIsEditing(false); // Switch back to view mode after saving
+    console.log("company data", newCompanyData);
   };
 
   const getStatusChip = (status) => {
@@ -100,7 +115,12 @@ const CompanyProfile = () => {
 
           <form onSubmit={handleRegister}>
             <div className="grid grid-cols-2 gap-6">
-              <TextField name="name" defaultValue={company?.name} isRequired className="w-full">
+              <TextField
+                name="name"
+                defaultValue={company?.name}
+                isRequired
+                className="w-full"
+              >
                 <Label className="text-stone-300 mb-1">Company Name</Label>
                 <Input
                   placeholder="e.g. Acme Corp"
@@ -113,35 +133,92 @@ const CompanyProfile = () => {
                 <Select
                   name="industry"
                   className="w-full"
-                  defaultSelectedKey={company?.industry || "Software Development"}
+                  defaultSelectedKey={
+                    company?.industry || "Software Development"
+                  }
                 >
                   <Label className="text-stone-300 mb-1">
                     Industry / Category
                   </Label>
                   <Select.Trigger className="bg-[#1a1a1c] border border-stone-800">
-                    <Select.Value defaultValue={company?.industry} placeholder="Select industry" />
+                    <Select.Value
+                      defaultValue={company?.industry}
+                      placeholder="Select industry"
+                    />
                     <Select.Indicator />
                   </Select.Trigger>
                   <Select.Popover>
                     <ListBox>
-                      <ListBox.Item id="Software Development" textValue="Software Development">Software Development</ListBox.Item>
-                      <ListBox.Item id="AI & Machine Learning" textValue="AI & Machine Learning">AI & Machine Learning</ListBox.Item>
-                      <ListBox.Item id="Cybersecurity" textValue="Cybersecurity">Cybersecurity</ListBox.Item>
-                      <ListBox.Item id="Cloud Computing" textValue="Cloud Computing">Cloud Computing</ListBox.Item>
-                      <ListBox.Item id="Data Analytics & Big Data" textValue="Data Analytics & Big Data">Data Analytics & Big Data</ListBox.Item>
-                      <ListBox.Item id="Fintech" textValue="Fintech">Fintech</ListBox.Item>
-                      <ListBox.Item id="Healthtech" textValue="Healthtech">Healthtech</ListBox.Item>
-                      <ListBox.Item id="Edtech" textValue="Edtech">Edtech</ListBox.Item>
-                      <ListBox.Item id="Web3 & Blockchain" textValue="Web3 & Blockchain">Web3 & Blockchain</ListBox.Item>
-                      <ListBox.Item id="Hardware & IoT" textValue="Hardware & IoT">Hardware & IoT</ListBox.Item>
-                      <ListBox.Item id="E-commerce" textValue="E-commerce">E-commerce</ListBox.Item>
-                      <ListBox.Item id="IT Services & Consulting" textValue="IT Services & Consulting">IT Services & Consulting</ListBox.Item>
+                      <ListBox.Item
+                        id="Software Development"
+                        textValue="Software Development"
+                      >
+                        Software Development
+                      </ListBox.Item>
+                      <ListBox.Item
+                        id="AI & Machine Learning"
+                        textValue="AI & Machine Learning"
+                      >
+                        AI & Machine Learning
+                      </ListBox.Item>
+                      <ListBox.Item
+                        id="Cybersecurity"
+                        textValue="Cybersecurity"
+                      >
+                        Cybersecurity
+                      </ListBox.Item>
+                      <ListBox.Item
+                        id="Cloud Computing"
+                        textValue="Cloud Computing"
+                      >
+                        Cloud Computing
+                      </ListBox.Item>
+                      <ListBox.Item
+                        id="Data Analytics & Big Data"
+                        textValue="Data Analytics & Big Data"
+                      >
+                        Data Analytics & Big Data
+                      </ListBox.Item>
+                      <ListBox.Item id="Fintech" textValue="Fintech">
+                        Fintech
+                      </ListBox.Item>
+                      <ListBox.Item id="Healthtech" textValue="Healthtech">
+                        Healthtech
+                      </ListBox.Item>
+                      <ListBox.Item id="Edtech" textValue="Edtech">
+                        Edtech
+                      </ListBox.Item>
+                      <ListBox.Item
+                        id="Web3 & Blockchain"
+                        textValue="Web3 & Blockchain"
+                      >
+                        Web3 & Blockchain
+                      </ListBox.Item>
+                      <ListBox.Item
+                        id="Hardware & IoT"
+                        textValue="Hardware & IoT"
+                      >
+                        Hardware & IoT
+                      </ListBox.Item>
+                      <ListBox.Item id="E-commerce" textValue="E-commerce">
+                        E-commerce
+                      </ListBox.Item>
+                      <ListBox.Item
+                        id="IT Services & Consulting"
+                        textValue="IT Services & Consulting"
+                      >
+                        IT Services & Consulting
+                      </ListBox.Item>
                     </ListBox>
                   </Select.Popover>
                 </Select>
               </div>
 
-              <TextField name="website" defaultValue={company?.website} className="w-full">
+              <TextField
+                name="website"
+                defaultValue={company?.website}
+                className="w-full"
+              >
                 <Label className="text-stone-300 mb-1">Website URL</Label>
                 <div className="flex w-full overflow-hidden rounded-lg border border-stone-800 focus-within:border-stone-500 transition-colors">
                   <div className="flex items-center px-3 bg-[#2a2a2c] text-stone-400 text-sm border-r border-stone-800">
@@ -159,7 +236,11 @@ const CompanyProfile = () => {
                 </div>
               </TextField>
 
-              <TextField defaultValue={company?.location} name="location" className="w-full">
+              <TextField
+                defaultValue={company?.location}
+                name="location"
+                className="w-full"
+              >
                 <Label className="text-stone-300 mb-1">Location</Label>
                 <Input
                   placeholder="City, Country"
@@ -257,7 +338,11 @@ const CompanyProfile = () => {
                 </div>
               </div>
 
-              <TextField defaultValue={company?.description} name="description" className="w-full col-span-2">
+              <TextField
+                defaultValue={company?.description}
+                name="description"
+                className="w-full col-span-2"
+              >
                 <Label className="text-stone-300 mb-1">Brief Description</Label>
                 <TextArea
                   placeholder="Tell us about your company's mission and culture..."
