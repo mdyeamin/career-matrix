@@ -17,12 +17,15 @@ import { FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
 import { FaArrowRight } from "react-icons/fa";
 import { authClient } from "@/lib/auth-client";
 import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const SignIn = () => {
   const router = useRouter();
   const [isVisible, setIsVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirect");
   const handleSighIn = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -36,11 +39,12 @@ const SignIn = () => {
       });
       if (error) {
         toast.error(error.message || "Invalid email or password!");
-        setIsLoading(false)
+        setIsLoading(false);
       }
       if (data) {
         toast.success("Welcome back!");
-        router.push("/");
+        // router.push("/");
+        router.push(redirectTo)
       }
     } catch (error) {
       toast.error(err.message || "Something went wrong. Please try again.");
@@ -139,7 +143,7 @@ const SignIn = () => {
             {/* বাটন গ্রুপ */}
             <div className="space-y-3 pt-2">
               <Button
-              isDisabled={isLoading}
+                isDisabled={isLoading}
                 type="submit"
                 className="w-full h-10 bg-violet-600 text-white font-bold text-xs rounded-lg hover:bg-violet-500 transition-all uppercase"
               >
