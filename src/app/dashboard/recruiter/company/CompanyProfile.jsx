@@ -13,11 +13,12 @@ import {
 import { createCompany } from "@/lib/actions/companies";
 import toast from "react-hot-toast";
 
-const CompanyProfile = ({recruiter}) => {
+const CompanyProfile = ({ recruiter, recruiterCompany }) => {
   // State to toggle between view mode and edit/register mode
   const [isEditing, setIsEditing] = useState(false);
 
-  const [company, setCompany] = useState(null);
+  const [company, setCompany] = useState(recruiterCompany);
+  console.log("company",company);
 
   // Image Upload States
   const [logoUrl, setLogoUrl] = useState("");
@@ -68,24 +69,24 @@ const CompanyProfile = ({recruiter}) => {
     // Attach the uploaded image URL to the company data
     data.logo = logoUrl || company?.logo;
 
-    const newCompanyData = { ...data,
-       status: "Pending",
-       recruiterId: recruiter.id, // Associate company with the current recruiter 
-      };
+    const newCompanyData = {
+      ...data,
+      status: "Pending",
+      recruiterId: recruiter?.id, // Safely associate company with the current recruiter
+    };
 
     setCompany(newCompanyData); // Update state with new company data
     const payload = await createCompany(newCompanyData); // Send data to server
-    console.log("send data to the server", payload);
-    if (payload.insertedId) {
+
+    if (payload?.insertedId) {
       toast.success(
         "Company information saved successfully! Awaiting approval.",
       );
-    }
-    if (!payload.insertedId) {
+    } else {
       toast.error("Failed to save company information. Please try again.");
     }
+
     setIsEditing(false); // Switch back to view mode after saving
-    console.log("company data", newCompanyData);
   };
 
   const getStatusChip = (status) => {
@@ -96,7 +97,7 @@ const CompanyProfile = ({recruiter}) => {
         variant="flat"
         className="capitalize"
       >
-        {status}
+        {status || "Pending"}
       </Chip>
     );
   };
@@ -109,7 +110,7 @@ const CompanyProfile = ({recruiter}) => {
         <div className="bg-[#121214] p-8 rounded-2xl border border-stone-800 shadow-xl">
           <div className="mb-8 pb-6 border-b border-stone-800">
             <h2 className="text-xl font-bold text-white">
-              {company ? "Edit Company Information" : "Register Company"}
+              {company?.name ? "Edit Company Information" : "Register Company"}
             </h2>
             <p className="text-sm text-stone-400 mt-1">
               Fill in the details below to complete your company profile.
@@ -356,7 +357,7 @@ const CompanyProfile = ({recruiter}) => {
             </div>
 
             <div className="flex justify-end gap-3 pt-6 mt-6 border-t border-stone-800">
-              {company && (
+              {company?.name && (
                 <Button
                   variant="flat"
                   onPress={() => setIsEditing(false)}
@@ -370,13 +371,13 @@ const CompanyProfile = ({recruiter}) => {
                 className="bg-white text-black font-bold px-6"
                 isLoading={isUploading}
               >
-                {company ? "Save Changes" : "Register Company"}
+                {company?.name ? "Save Changes" : "Register Company"}
               </Button>
             </div>
           </form>
         </div>
-      ) : !company ? (
-        /* 2. EMPTY STATE VIEW */
+      ) : !company?.name ? (
+        /* 2. EMPTY STATE VIEW (FIXED) */
         <div className="bg-[#121214] p-12 rounded-2xl border border-stone-800 text-center shadow-xl">
           <h2 className="text-xl font-bold text-white mb-2">
             No Company Registered
@@ -404,22 +405,26 @@ const CompanyProfile = ({recruiter}) => {
                 />
               ) : (
                 <div className="w-14 h-14 rounded-2xl bg-stone-800 border border-stone-700 flex items-center justify-center text-stone-400 font-bold text-xl">
-                  {company.name?.charAt(0).toUpperCase()}
+                  {company?.name?.charAt(0).toUpperCase()}
                 </div>
               )}
               <div>
-                <h2 className="text-xl font-bold text-white">{company.name}</h2>
-                <a
-                  href={`https://${company.website.replace("https://", "")}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-sm text-blue-400 hover:underline"
-                >
-                  {company.website.replace("https://", "")}
-                </a>
+                <h2 className="text-xl font-bold text-white">
+                  {company?.name}
+                </h2>
+                {company?.website && (
+                  <a
+                    href={`https://${company.website.replace("https://", "")}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-sm text-blue-400 hover:underline"
+                  >
+                    {company.website.replace("https://", "")}
+                  </a>
+                )}
               </div>
             </div>
-            {getStatusChip(company.status)}
+            {getStatusChip(company?.status)}
           </div>
 
           <div className="grid grid-cols-2 gap-8 text-stone-300">
@@ -427,20 +432,20 @@ const CompanyProfile = ({recruiter}) => {
               <p className="text-stone-500 text-xs font-semibold uppercase tracking-wider mb-1">
                 Industry
               </p>
-              <p className="text-white text-lg">{company.industry}</p>
+              <p className="text-white text-lg">{company?.industry}</p>
             </div>
             <div>
               <p className="text-stone-500 text-xs font-semibold uppercase tracking-wider mb-1">
                 Location
               </p>
-              <p className="text-white text-lg">{company.location}</p>
+              <p className="text-white text-lg">{company?.location}</p>
             </div>
             <div>
               <p className="text-stone-500 text-xs font-semibold uppercase tracking-wider mb-1">
                 Company Size
               </p>
               <p className="text-white text-lg">
-                {company.employeeCount} employees
+                {company?.employeeCount} employees
               </p>
             </div>
             <div className="col-span-2 mt-2">
@@ -448,7 +453,7 @@ const CompanyProfile = ({recruiter}) => {
                 About the Company
               </p>
               <p className="text-white leading-relaxed whitespace-pre-wrap">
-                {company.description}
+                {company?.description}
               </p>
             </div>
           </div>

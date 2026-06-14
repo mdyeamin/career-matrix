@@ -1,10 +1,23 @@
+import { serverFetch } from "../core/server";
 
-const baseurl = process.env.NEXT_PUBLIC_SERVER_URL
-export const getCompanyJobs = async(companyId, status="active")=>{
-const res = await fetch(`${baseurl}/api/jobs?companyId=${companyId}&status=${status}`)
+const baseurl = process.env.NEXT_PUBLIC_SERVER_URL;
 
-const data = res.json()
-console.log(data);
+// get all jobs
+export const getJobs = async () => {
+  return serverFetch("/api/jobs");
+};
+// get job by id
+export const getJobById = async (id) => {
+  return serverFetch(`/api/jobs/${id}`);
+};
 
-return data 
-}
+export const getCompanyJobs = async (companyId, status = "active") => {
+  const res = await fetch(
+    `${baseurl}/api/jobs?companyId=${companyId}&status=${status}`,
+  );
+
+  const data = res.json();
+  console.log(data);
+
+  return data;
+};

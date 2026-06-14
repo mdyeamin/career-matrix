@@ -77,6 +77,7 @@ export default function Nav() {
           <div className="flex items-center gap-5">
             {session?.user ? (
               <Link href="/auth/signin">
+                <span>{session?.user?.name}</span>
               <Button
                 onClick={async () => await authClient.signOut()}
                 variant=""
