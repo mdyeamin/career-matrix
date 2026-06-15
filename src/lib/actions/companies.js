@@ -4,5 +4,5 @@ import { serverMutation } from "../core/server";
 
 
 export const createCompany = async (newCompanyData) => {
-  return await serverMutation("/api/companies", newCompanyData);
+  return serverMutation("/api/companies", newCompanyData);
 };

@@ -23,9 +23,9 @@ const SignIn = () => {
   const router = useRouter();
   const [isVisible, setIsVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const searchParams = useSearchParams();
-  const redirectTo = searchParams.get("redirect");
+  const redirectTo = searchParams.get("redirect") || `/`;
   const handleSighIn = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -44,7 +44,7 @@ const SignIn = () => {
       if (data) {
         toast.success("Welcome back!");
         // router.push("/");
-        router.push(redirectTo)
+        router.push(redirectTo);
       }
     } catch (error) {
       toast.error(err.message || "Something went wrong. Please try again.");
@@ -193,7 +193,7 @@ const SignIn = () => {
               <p className="text-center text-[11px] text-stone-500 font-medium">
                 New to career matrix?{" "}
                 <Link
-                  href="/auth/signup"
+                  href={`/auth/signup?redirect=${redirectTo}`}
                   className="text-violet-500 font-bold ml-1"
                 >
                   Register

@@ -25,7 +25,7 @@ import {
 } from "react-icons/fi";
 import { authClient } from "@/lib/auth-client";
 import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
 
@@ -33,8 +33,9 @@ const SignUp = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [role, setRole] = useState("seeker");
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirect") || "/";
 
-  
   const router = useRouter();
   const handleSighUp = async (e) => {
     e.preventDefault();
@@ -56,7 +57,7 @@ const SignUp = () => {
       if (data) {
         toast.success("successfully! Redirecting... Please login");
         await authClient.signOut();
-        router.push("/auth/signin");
+        router.push(`/auth/signin?redirect=${redirectTo}`);
       }
     } catch (err) {
       toast.error(err.message || "Something went wrong. Please try again.");
@@ -286,7 +287,7 @@ const SignUp = () => {
               <p className="text-center text-[11px] text-stone-500 font-medium">
                 Already a member ?{" "}
                 <Link
-                  href="/auth/signin"
+                  href={`/auth/signin?redirect=${redirectTo}`}
                   className="text-violet-500 font-bold ml-1"
                 >
                   Sign In
