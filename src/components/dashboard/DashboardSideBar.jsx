@@ -1,4 +1,5 @@
 "use client";
+import { authClient } from "@/lib/auth-client";
 import {
   LayoutSideContentLeft,
   Bell,
@@ -9,12 +10,55 @@ import {
   Person,
   Briefcase,
   CirclePlus,
+  LayoutCells,
+  Bookmark,
+  FileText,
+  GearBranches,
 } from "@gravity-ui/icons";
 import { Button, Drawer } from "@heroui/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 const DashboardSideBar = () => {
-  const navItems = [
+    const path = usePathname();
+  const {
+    data: session,
+    isPending, //loading state
+    error, //error object
+    refetch, //refetch the session
+  } = authClient.useSession();
+  const seekerNavItems = [
+    {
+      icon: LayoutCells,
+      href: "/dashboard/seeker",
+      label: "Dashboard",
+    },
+    {
+      icon: Magnifier,
+      href: "/dashboard/seeker/jobs",
+      label: "Jobs",
+    },
+    {
+      icon: Bookmark,
+      href: "/dashboard/seeker/saved-jobs",
+      label: "Saved Jobs",
+    },
+    {
+      icon: FileText,
+      href: "/dashboard/seeker/applications",
+      label: "Applications",
+    },
+    {
+      icon: GearBranches,
+      href: "/dashboard/seeker/billing",
+      label: "Billing",
+    },
+    {
+      icon: GearBranches,
+      href: "/dashboard/seeker/settings",
+      label: "Settings",
+    },
+  ];
+  const RecruiterNavItems = [
     { icon: House, href: "/dashboard/recruiter", label: "Home" },
     { icon: Briefcase, href: "/dashboard/recruiter/jobs", label: "Jobs" },
     {
@@ -31,7 +75,12 @@ const DashboardSideBar = () => {
     { icon: Person, href: "", label: "Profile" },
     { icon: Gear, href: "", label: "Settings" },
   ];
-  const path = usePathname();
+  const navLinksMap = {
+    seeker: seekerNavItems,
+    recruiter: RecruiterNavItems,
+  };
+  const navItems = navLinksMap[session?.user?.role || "seeker"] || [];
+
 
   const navMenu = (
     <nav className="flex flex-col gap-1">

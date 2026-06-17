@@ -20,10 +20,20 @@ export default function Nav() {
   const navLinks = [
     { name: "Browse Jobs", path: "/jobs" },
     { name: "Company", path: "/company" },
-    { name: "Pricing", path: "/pricing" },
+    { name: "Pricing", path: "/plans" },
   ];
-  // console.log(session);
 
+  const dashboardLinks = {
+    seeker: "/dashboard/seeker",
+    recruiter: "dashboard/recruiter",
+  };
+
+  if (session?.user?.email) {
+    navLinks.push({
+      name: "Dashboard",
+      path: dashboardLinks[session?.user?.role || "seeker"],
+    });
+  }
   return (
     <nav className="fixed top-4 inset-x-0 z-50 px-4 font-sans">
       <header className="max-w-7xl h-16 bg-[#18181B] border border-stone-800 rounded-2xl px-4 md:px-6 shadow-2xl mx-auto flex items-center justify-between">
@@ -76,16 +86,19 @@ export default function Nav() {
 
           <div className="flex items-center gap-5">
             {session?.user ? (
-              <Link href="/auth/signin">
+              <>
                 <span>{session?.user?.name}</span>
-              <Button
-                onClick={async () => await authClient.signOut()}
-                variant=""
-                underline="none"
-                className="no-underline text-violet-400 hover:text-violet-300 text-sm font-medium transition-colors"
-              >
-                Sign Out
-              </Button></Link>
+                <Link href="/auth/signin">
+                  <Button
+                    onClick={async () => await authClient.signOut()}
+                    variant=""
+                    underline="none"
+                    className="no-underline text-violet-400 hover:text-violet-300 text-sm font-medium transition-colors"
+                  >
+                    Sign Out
+                  </Button>
+                </Link>
+              </>
             ) : (
               <Link
                 href="/auth/signin"

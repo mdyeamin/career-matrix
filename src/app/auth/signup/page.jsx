@@ -35,7 +35,7 @@ const SignUp = () => {
   const [role, setRole] = useState("seeker");
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get("redirect") || "/";
-
+  const plan = role === "seeker" ? "seeker_free" : "recruiter_free";
   const router = useRouter();
   const handleSighUp = async (e) => {
     e.preventDefault();
@@ -47,6 +47,7 @@ const SignUp = () => {
       const { data, error } = await authClient.signUp.email({
         ...userData,
         role,
+        plan
         // callbackURL: "/",
       });
       if (error) {

@@ -5,17 +5,18 @@ import { Input, Button, Card, Form, TextArea, Label } from "@heroui/react";
 import { FaPaperPlane, FaBriefcase, FaBuilding } from "react-icons/fa";
 import { submitApplication } from "@/lib/actions/applications";
 import toast from "react-hot-toast"; // <-- react-hot-toast ইমপোর্ট করা হলো
+import { useRouter } from "next/navigation";
 
 const JobApply = ({ job, applicant }) => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [urlError, setUrlError] = useState(false);
-
+const router = useRouter()
   // জবের ডেটা ডিস্ট্রাকচারিং (ফলব্যাক ভ্যালু সহ)
   const {
-    jobTitle = "Software Engineer",
-    companyName = "Tech Corp",
-    companyLogo = "https://ui-avatars.com/api/?name=TC&background=2a2a2b&color=fff",
+    jobTitle ,
+    companyName ,
+    companyLogo ,
   } = job || {};
 
   // URL ভ্যালিডেশন চেক করার ফাংশন
@@ -63,6 +64,7 @@ const JobApply = ({ job, applicant }) => {
         toast.success("Application submitted successfully!"); // <-- টোস্ট সাকসেস
         setSuccess(true);
         e.target.reset();
+        router.push(`/jobs/${job._id}/apply`)
       } else {
         // যদি রেসপন্স ঠিক না থাকে
         toast.error(res?.message || "Failed to submit application. Please try again.");
