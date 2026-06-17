@@ -2,7 +2,47 @@
 
 import React from "react";
 import { Table } from "@heroui/react";
-import { Envelope, Eye, TrashBin } from "@gravity-ui/icons"; // আপনার ব্যবহৃত আইকন লাইব্রেরি
+import { Briefcase } from "@gravity-ui/icons"; // Job আইকনের জন্য
+import Image from "next/image";
+
+// রিলেটিভ টাইম (যেমন: "2 days ago") বের করার হেল্পার ফাংশন
+const getRelativeTime = (dateInput) => {
+  const date = new Date(dateInput);
+  const now = new Date();
+  const diffInSeconds = Math.floor((now - date) / 1000);
+  
+  if (diffInSeconds < 60) return "Just now";
+  const diffInMinutes = Math.floor(diffInSeconds / 60);
+  if (diffInMinutes < 60) return `${diffInMinutes} mins ago`;
+  const diffInHours = Math.floor(diffInMinutes / 60);
+  if (diffInHours < 24) return `${diffInHours} hours ago`;
+  const diffInDays = Math.floor(diffInHours / 24);
+  if (diffInDays === 1) return "1 day ago";
+  if (diffInDays < 7) return `${diffInDays} days ago`;
+  const diffInWeeks = Math.floor(diffInDays / 7);
+  if (diffInWeeks === 1) return "1 week ago";
+  return `${diffInWeeks} weeks ago`;
+};
+
+// স্ট্যাটাস অনুযায়ী ব্যাজের কালার দেওয়ার হেল্পার ফাংশন
+const renderStatusBadge = (status = "Applied") => {
+  const styles = {
+    Applied: "border-stone-500 text-stone-300",
+    Review: "border-yellow-500 text-yellow-500",
+    Shortlisted: "border-green-500 text-green-500",
+    Rejected: "border-red-500 text-red-500",
+    Offered: "border-stone-300 text-white",
+  };
+
+  // যদি স্ট্যাটাস ম্যাচ না করে, তবে ডিফল্ট হিসেবে 'Applied' এর স্টাইল পাবে
+  const badgeStyle = styles[status] || styles.Applied;
+
+  return (
+    <span className={`px-3 py-1 rounded-full border text-[11px] font-medium tracking-wide ${badgeStyle}`}>
+      {status}
+    </span>
+  );
+};
 
 const ApplicationsTable = ({ jobs }) => {
   return (
@@ -28,16 +68,19 @@ const ApplicationsTable = ({ jobs }) => {
             <Table.Content aria-label="Applications table">
               {/* Table Header */}
               <Table.Header>
-                <Table.Column className="bg-[#1a1a1a] text-stone-400 text-xs uppercase tracking-wider py-4">
+                <Table.Column className="bg-[#1a1a1a] text-stone-400 text-xs font-semibold py-4">
                   Job Title
                 </Table.Column>
-                <Table.Column className="bg-[#1a1a1a] text-stone-400 text-xs uppercase tracking-wider py-4">
+                <Table.Column className="bg-[#1a1a1a] text-stone-400 text-xs font-semibold py-4">
                   Company
                 </Table.Column>
-                <Table.Column className="bg-[#1a1a1a] text-stone-400 text-xs uppercase tracking-wider py-4">
-                  Applied Date
+                <Table.Column className="bg-[#1a1a1a] text-stone-400 text-xs font-semibold py-4">
+                  Applied
                 </Table.Column>
-                <Table.Column className="bg-[#1a1a1a] text-stone-400 text-xs uppercase tracking-wider py-4 text-center">
+                <Table.Column className="bg-[#1a1a1a] text-stone-400 text-xs font-semibold py-4">
+                  Status
+                </Table.Column>
+                <Table.Column className="bg-[#1a1a1a] text-stone-400 text-xs font-semibold py-4">
                   Action
                 </Table.Column>
               </Table.Header>
@@ -46,87 +89,57 @@ const ApplicationsTable = ({ jobs }) => {
               <Table.Body>
                 {jobs?.length > 0 ? (
                   jobs.map((app) => {
-                    // ডেট ফরম্যাটিং
                     const dateValue = app.createdAt?.$date || app.createdAt;
-                    const formattedDate = new Date(
-                      dateValue,
-                    ).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "short",
-                      day: "numeric",
-                    });
-
-                    // লোগোর ফলব্যাক জেনারেট করা
-                    const companyLogoUrl =
-                      app.companyLogo ||
-                      `https://ui-avatars.com/api/?name=${app.companyName}&background=2a2a2b&color=fff&rounded=true`;
+                    const relativeTime = getRelativeTime(dateValue);
 
                     return (
                       <Table.Row
                         key={app._id?.$oid || app._id}
                         className="border-b border-[#222222]/50 hover:bg-[#18181b] transition-colors group"
                       >
-                        {/* Job Title Cell */}
+                        {/* Job Title Cell (Icon + Title + Meta) */}
                         <Table.Cell className="py-4">
-                          <span className="font-semibold text-white group-hover:text-purple-400 transition-colors">
-                            {app.jobTitle}
+                          <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 rounded-lg bg-[#222222] border border-[#2c2c2e] flex items-center justify-center shrink-0">
+                              <Image  width={200} height={200} src={app?.companyLogo || "https://d1csarkz8obe9u.cloudfront.net/posterpreviews/company-logo-design-template-e089327a5c476ce5c70c74f7359c5898_screen.jpg"} alt="" />
+                            </div>
+                            <div className="flex flex-col">
+                              <span className="font-semibold text-stone-200 group-hover:text-white transition-colors">
+                                {app.jobTitle}
+                              </span>
+                              <span className="text-xs text-stone-500 mt-0.5">
+                                {app.jobType || "Full-time"} • {app.location || "Remote"}
+                              </span>
+                            </div>
+                          </div>
+                        </Table.Cell>
+
+                        {/* Company Cell (Text Only like image) */}
+                        <Table.Cell className="py-4">
+                          <span className="text-stone-300 text-sm">
+                            {app.companyName}
                           </span>
                         </Table.Cell>
 
-                        {/* Company Cell (With Image) */}
-                        <Table.Cell className="py-4">
-                          <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-white/5 border border-[#2c2c2e] overflow-hidden shrink-0 flex items-center justify-center">
-                              <img
-                                src={companyLogoUrl}
-                                alt={app.companyName}
-                                className="w-full h-full object-cover"
-                              />
-                            </div>
-                            <span className="text-stone-300 capitalize text-sm font-medium">
-                              {app.companyName}
-                            </span>
-                          </div>
-                        </Table.Cell>
-
-                        {/* Date Cell */}
+                        {/* Applied Date Cell (Relative Time) */}
                         <Table.Cell className="py-4 text-stone-400 text-sm">
-                          {formattedDate}
+                          {relativeTime}
                         </Table.Cell>
 
-                        {/* Action Cell */}
-                        {/* Action Cell */}
+                        {/* Status Cell */}
                         <Table.Cell className="py-4">
-                          <div className="flex items-center justify-center gap-2">
-                            {/* Resume Button */}
-                            <a
-                              href={app.resumeLink}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center justify-center px-3 py-1.5 bg-purple-600/10 text-purple-400 border border-purple-600/20 rounded-lg text-xs font-semibold hover:bg-purple-600 hover:text-white transition-all focus:outline-none gap-1.5"
-                            >
-                              <Envelope className="w-3.5 h-3.5" />
-                              Resume
-                            </a>
+                          {/* আপনার ডেটাবেসে status ফিল্ড না থাকলে ডিফল্ট 'Applied' দেখাবে */}
+                          {renderStatusBadge(app.status || "Applied")}
+                        </Table.Cell>
 
-                            {/* View Job Button */}
-                            <a
-                              href={`/jobs/${app.jobId}`}
-                              className="inline-flex items-center justify-center px-3 py-1.5 bg-[#222222] text-stone-300 border border-[#2c2c2e] rounded-lg text-xs font-semibold hover:bg-stone-300 hover:text-black transition-all focus:outline-none gap-1.5"
-                            >
-                              <Eye className="w-3.5 h-3.5" />
-                              View
-                            </a>
-
-                            {/* Delete Button (UI Only) */}
-                            <button
-                              type="button"
-                              className="inline-flex items-center justify-center px-3 py-1.5 bg-red-500/10 text-red-500 border border-red-500/20 rounded-lg text-xs font-semibold hover:bg-red-600 hover:text-white transition-all focus:outline-none gap-1.5"
-                            >
-                              <TrashBin className="w-3.5 h-3.5" />
-                              Delete
-                            </button>
-                          </div>
+                        {/* Action Cell (Details Text) */}
+                        <Table.Cell className="py-4">
+                          <a
+                            href={`/jobs/${app.jobId?.$oid || app.jobId}`}
+                            className="text-sm font-medium text-stone-300 hover:text-white transition-colors"
+                          >
+                            Details
+                          </a>
                         </Table.Cell>
                       </Table.Row>
                     );
@@ -137,6 +150,7 @@ const ApplicationsTable = ({ jobs }) => {
                     <Table.Cell className="py-8 text-stone-500 text-center">
                       No applications found.
                     </Table.Cell>
+                    <Table.Cell className="py-8">-</Table.Cell>
                     <Table.Cell className="py-8">-</Table.Cell>
                     <Table.Cell className="py-8">-</Table.Cell>
                     <Table.Cell className="py-8">-</Table.Cell>

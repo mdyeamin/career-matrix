@@ -1,6 +1,6 @@
 import { getJobById } from "@/lib/api/jobs";
 import React from "react";
-import { Button, Card } from "@heroui/react";
+import { Card } from "@heroui/react";
 import {
   FaMapMarkerAlt,
   FaBriefcase,

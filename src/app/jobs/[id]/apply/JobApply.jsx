@@ -50,10 +50,13 @@ const router = useRouter()
       const applicationData = {
         jobId: job?._id,
         jobTitle: job?.jobTitle,
+        companyLogo:job?.companyLogo,
         companyName: job?.companyName,
         applicantId: applicant?.id,
         applicantName: applicant?.name,
         applicantEmail: applicant?.email,
+        status:"applied",
+
         ...data,
       };
       

@@ -14,6 +14,10 @@ import {
   Bookmark,
   FileText,
   GearBranches,
+  LayoutCellsLarge,
+  Persons,
+  Factory,
+  ChartAreaStacked,
 } from "@gravity-ui/icons";
 import { Button, Drawer } from "@heroui/react";
 import Link from "next/link";
@@ -28,7 +32,7 @@ const DashboardSideBar = () => {
   } = authClient.useSession();
   const seekerNavItems = [
     {
-      icon: LayoutCells,
+      icon: LayoutCellsLarge,
       href: "/dashboard/seeker",
       label: "Dashboard",
     },
@@ -75,9 +79,43 @@ const DashboardSideBar = () => {
     { icon: Person, href: "", label: "Profile" },
     { icon: Gear, href: "", label: "Settings" },
   ];
+const AdminNavItems = [
+  { 
+    icon: LayoutCellsLarge, 
+    href: "/dashboard/admin", 
+    label: "Dashboard" 
+  },
+  { 
+    icon: Persons, 
+    href: "/dashboard/admin/users", 
+    label: "Users" 
+  },
+  { 
+    icon: Factory, 
+    href: "/dashboard/admin/companies", 
+    label: "Companies" 
+  },
+  { 
+    icon: Briefcase, 
+    href: "/dashboard/admin/jobs", 
+    label: "Jobs" 
+  },
+  { 
+    icon: ChartAreaStacked, 
+    href: "/dashboard/admin/payments", 
+    label: "Payments" 
+  },
+  { 
+    icon: Gear, 
+    href: "/dashboard/admin/settings", 
+    label: "Settings" 
+  },
+];
+
   const navLinksMap = {
     seeker: seekerNavItems,
     recruiter: RecruiterNavItems,
+    admin: AdminNavItems
   };
   const navItems = navLinksMap[session?.user?.role || "seeker"] || [];
 

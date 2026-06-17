@@ -25,7 +25,8 @@ export default function Nav() {
 
   const dashboardLinks = {
     seeker: "/dashboard/seeker",
-    recruiter: "dashboard/recruiter",
+    recruiter: "/dashboard/recruiter",
+    admin:  "dashboard/admin"
   };
 
   if (session?.user?.email) {
