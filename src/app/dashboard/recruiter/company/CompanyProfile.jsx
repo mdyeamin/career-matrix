@@ -18,7 +18,7 @@ const CompanyProfile = ({ recruiter, recruiterCompany }) => {
   const [isEditing, setIsEditing] = useState(false);
 
   const [company, setCompany] = useState(recruiterCompany);
-  console.log("company",company);
+ console.log("Company Before Created",company);
 
   // Image Upload States
   const [logoUrl, setLogoUrl] = useState("");
@@ -71,7 +71,7 @@ const CompanyProfile = ({ recruiter, recruiterCompany }) => {
 
     const newCompanyData = {
       ...data,
-      status: "Pending",
+      status: company && company.status ? company.status :"Pending",
       recruiterId: recruiter?.id, // Safely associate company with the current recruiter
     };
 
